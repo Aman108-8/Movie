@@ -1,0 +1,42 @@
+# =========================
+# React frontend_movie
+# =========================
+frontend_movie/node_modules
+frontend_movie/dist
+frontend_movie/build
+frontend_movie/.env
+
+# Logs
+frontend_movie/npm-debug.log*
+frontend_movie/yarn-debug.log*
+frontend_movie/yarn-error.log*
+
+# =========================
+# Spring Boot MovieBackend
+# =========================
+MovieBackend/target
+MovieBackend/.mvn
+MovieBackend/.idea
+MovieBackend/*.iml
+MovieBackend/images
+
+# Environment files
+MovieBackend/.env
+MovieBackend/application-local.properties
+
+# =========================
+# OS / Editor Files
+# =========================
+.DS_Store
+Thumbs.db
+
+# VS Code
+.vscode/
+
+# IntelliJ
+.idea/
+
+# =========================
+# Misc
+# =========================
+*.log
