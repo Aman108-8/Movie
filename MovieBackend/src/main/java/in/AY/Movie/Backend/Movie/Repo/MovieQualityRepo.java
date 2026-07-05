@@ -2,6 +2,7 @@ package in.AY.Movie.Backend.Movie.Repo;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.function.Function;
 
 import org.springframework.data.domain.Example;
@@ -13,7 +14,7 @@ import org.springframework.data.repository.query.FluentQuery.FetchableFluentQuer
 
 import in.AY.Movie.Backend.Movie.Entity.MovieQuality;
 
-public interface MovieQualityRepo extends JpaRepository<MovieQuality, Integer>
+public interface MovieQualityRepo extends JpaRepository<MovieQuality, Long>
 {	
-	List<MovieQuality> findByMovieId(Integer movieId);
+	List<MovieQuality> findByMovie_Id(UUID movieId);
 }

@@ -1,14 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { updateMovie, deleteScreenshot, getScreenshots, getQualities, updateThumbnail, updateScreenShot, uploadScreenshots, updateQuality, deleteQuality, addQuality} from '../Config/authApi'
-import thumbnail from '../assets/tb.png'
+import * as api from '../Config/authApi';
 import { FaArrowLeft,FaTrash, FaPlusCircle, FaCamera} from "react-icons/fa";
 import defaultImg from '../assets/default.png';
+import { useNavigate } from "react-router-dom";
 
 const EditForm = ({movie}) => {
     const inputClass = "text-white bg-glass-fill border border-glass-border rounded-lg text-sm text-gray-400 px-4 py-2.5 focus:outline-none focus:border-cyan-400";
     const labelClass = "text-sm text-cyan-400 font-semibold mb-2 block"; // Problem 3: addDriveIcon, use cyan accent here
-    
     
 
     const boxStyle = {
@@ -42,12 +41,14 @@ const EditForm = ({movie}) => {
         thumbnail: ""
       });
 
+      const [currentMovie, setCurrentMovie] = useState(movie);  //to fetch id after creating movie after storing ss, quality
       const [screenshots, setScreenshots] = useState([]);
       const [quality, setQuality] = useState([]);
       const [savingId, setSavingId] = useState(null); // Optional: for loading state
       const  [editingField, setEditingField] = useState(null);
       const fileThumbInputRef = useRef();
       const fileMultiSSInputRef = useRef();
+      const updateSSInputRef = useRef();
       //const [selectedSS, setSelectedSS] = useState(null);
       const selectedSSRef = useRef(null);
       
@@ -66,19 +67,23 @@ const EditForm = ({movie}) => {
 
       useEffect(() => {
         if (movie?.id) {
-          fetchScreenshots(movie.id);
+          fetchScreenshots(currentMovie.id);
         }
+      }, [movie]);
+
+      useEffect(()=>{
+        setCurrentMovie(movie);
       }, [movie]);
 
       useEffect(() => {
         if (movie?.id) {
-          fetchQualities(movie.id);
+          fetchQualities(currentMovie.id);
         }
       }, [movie]);
       
       const fetchScreenshots = async (movieId) => {
         try {
-          const res = await getScreenshots(movieId);
+          const res = await api.getScreenshots(movieId);
           console.log("Screenshots:", res.data);
           console.log("Screenshot object:", screenshots);
           setScreenshots(res.data);
@@ -89,7 +94,7 @@ const EditForm = ({movie}) => {
 
       const fetchQualities = async (movieId) => {
         try {
-          const res = await getQualities(movieId);
+          const res = await api.getQualities(movieId);
           console.log("getQualities:", res.data);
           console.log("getQualities object:", screenshots);
           setQuality(res.data);
@@ -99,13 +104,29 @@ const EditForm = ({movie}) => {
       };
 
       const handleMovieSave = async () => {
-        try {
-          const res = await updateMovie(movie.id, formData);
-      
-          console.log("Saved:", res.data);
-      
-        } catch (err) {
-          console.error("Error saving movie:", err);
+        if(currentMovie?.id)
+        {
+          try {
+            const res = await api.updateMovie(currentMovie.id, formData);
+        
+            console.log("Saved:", res.data);
+
+            setCurrentMovie(res.data)
+        
+          } catch (err) {
+            console.error("Error saving movie:", err);
+          }
+        }
+        else{
+          try {
+            const res = await api.addMovie(formData);
+            setCurrentMovie(res.data);
+
+            console.log("Saved:", res.data);
+        
+          } catch (err) {
+            console.error("Error saving movie:", err);
+          }
         }
       };
 
@@ -126,7 +147,7 @@ const EditForm = ({movie}) => {
       const handleScreenshotClick = (ssId) => {
         console.log("Clicked screenshot ID:", ssId); // Debug log
         selectedSSRef.current = ssId; // Store in ref instead of dataset
-        fileMultiSSInputRef.current.click();
+        updateSSInputRef.current.click();
       };
 
       const handleThumbnailChange = async (e) => {
@@ -134,7 +155,7 @@ const EditForm = ({movie}) => {
         if (!file) return;
       
         try {
-          const res = await updateThumbnail(movie.id, file);
+          const res = await api.updateThumbnail(currentMovie.id, file);
 
           // ✅ BEST: use backend response
           const newFileName = res.data;
@@ -148,7 +169,7 @@ const EditForm = ({movie}) => {
         } catch (err) {
           console.error("Thumbnail update failed", err);
         }
-      };
+      }; 
 
       const handleAddScreenShot = async (e) => {
         const files = Array.from(e.target.files); // ✅ convert FileList → Array
@@ -156,11 +177,29 @@ const EditForm = ({movie}) => {
         if (!files.length) return;
       
         try {
-          await uploadScreenshots(movie.id, files);
+          await api.uploadScreenshots(currentMovie.id, files);
           
           console.log('upload success')
 
-          fetchScreenshots(movie.id)
+          fetchScreenshots(currentMovie.id)
+      
+        } catch (err) {
+          console.error("Screenshot update failed", err);
+        }
+      };
+
+      const handleUpdateScreenshot = async (e) => {
+        const file = e.target.files[0];
+      
+        if (!file) return;
+      
+        try {
+      
+          console.log("Updating screenshot:", selectedSSRef.current);
+      
+          await api.updateScreenShot(selectedSSRef.current,currentMovie.id,file);
+      
+          await fetchScreenshots(currentMovie.id);
       
         } catch (err) {
           console.error("Screenshot update failed", err);
@@ -169,7 +208,7 @@ const EditForm = ({movie}) => {
 
       const handleDeleteScreenshot = async (ssId) => {
         try {
-          await deleteScreenshot(movie.id, ssId);
+          await api.deleteScreenshot(currentMovie.id, ssId);
           console.error("Delete success",ssId);
           // ✅ remove from UI instantly
           setScreenshots(prev => prev.filter(ss => ss.id !== ssId));
@@ -198,8 +237,8 @@ const EditForm = ({movie}) => {
           setSavingId(q.id); // Optional: show saving indicator
 
           if(q.isNew){
-            const res = await addQuality(
-              movie.id, {
+            const res = await api.addQuality(
+              currentMovie.id, {
                 quality : q.quality,
                 link: q.link
               }
@@ -212,7 +251,7 @@ const EditForm = ({movie}) => {
           
           else {
             // 🟢 UPDATE EXISTING
-            await updateQuality(q.id, {
+            await api.updateQuality(q.id, {
               quality: q.quality,
               link: q.link
             });
@@ -245,7 +284,7 @@ const EditForm = ({movie}) => {
 
       const handleQualityDelete = async (qid) =>{
         try {
-          await deleteQuality(qid);
+          await api.deleteQuality(qid);
           console.log("successfully quality deleted");
           setQuality(prev => prev.filter(q => q.id !== qid));
         } catch (error) {
@@ -362,7 +401,22 @@ const EditForm = ({movie}) => {
                                                     />
                                             </div>
                                         </div>
-                                        <button className='bg-cyan-400 text-gray-950 font-bold py-2 ml-[60%]  rounded-lg text-xs hover:bg-cyan-300 transition-all duration-300' onClick={handleMovieSave}>Save</button> 
+                                        <div className='flex justify-end gap-7'>
+  
+                                          <button
+                                            className='bg-red-400 text-gray-950 font-bold py-2 px-5 rounded-lg text-xs hover:bg-red-300 transition-all duration-300' onClick={() => window.location.href = `/admin/Movie`}
+                                          >
+                                            Cancel
+                                          </button>
+
+                                          <button
+                                            className='bg-cyan-400 text-gray-950 font-bold py-2 px-5 rounded-lg text-xs hover:bg-cyan-300 transition-all duration-300'
+                                            onClick={handleMovieSave}
+                                          >
+                                            Save
+                                          </button>
+
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -426,6 +480,14 @@ const EditForm = ({movie}) => {
                             onChange={handleAddScreenShot}
                             className="hidden"
                           />
+
+                        <input
+                          type="file"
+                          accept="image/*"
+                          ref={updateSSInputRef}
+                          onChange={handleUpdateScreenshot}
+                          className="hidden"
+                        />
                     </div>  
                         
                     <div className='max-w-[1480px] mx-auto mt-1 space-y-8 z-50' > 

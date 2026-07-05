@@ -1,6 +1,7 @@
 package in.AY.Movie.Backend.Movie.Implementation;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,7 @@ public class MovieQualityImpl implements MovieQualityService
 	ModelMapper mm;
 	
 	@Override
-	public MovieQualityDto addMovieQuality(Integer movieId, MovieQualityDto mq) {
+	public MovieQualityDto addMovieQuality(UUID movieId, MovieQualityDto mq) {
 
 	    MovieQuality movieQuality = mm.map(mq, MovieQuality.class);
 
@@ -44,7 +45,7 @@ public class MovieQualityImpl implements MovieQualityService
 	}
 
 	@Override
-	public MovieQualityDto updateQuality(Integer movieQualityId, MovieQualityDto mq) {
+	public MovieQualityDto updateQuality(Long movieQualityId, MovieQualityDto mq) {
 		MovieQuality quality = mqr.findById(movieQualityId).orElseThrow(() -> new ResourceNotFoundException("Movie Quality", "Movie Quality id", movieQualityId));;
 		quality.setLink(mq.getLink());
 		quality.setQuality(mq.getQuality());
@@ -53,15 +54,15 @@ public class MovieQualityImpl implements MovieQualityService
 	}
 
 	@Override
-	public void deleteQuality(Integer movieQualityId) {
+	public void deleteQuality(Long movieQualityId) {
 		MovieQuality quality = mqr.findById(movieQualityId).orElseThrow(() -> new ResourceNotFoundException("Movie Quality", "Movie Quality id", movieQualityId));
 		mqr.delete(quality);
 	}
 
 	@Override
-	public List<MovieQualityDto> getAllQuality(Integer movieId) {
+	public List<MovieQualityDto> getAllQuality(UUID movieId) {
 
-	    List<MovieQuality> qualities = mqr.findByMovieId(movieId);
+	    List<MovieQuality> qualities = mqr.findByMovie_Id(movieId);
 
 	    return qualities.stream()
 	            .map(q -> mm.map(q, MovieQualityDto.class))
@@ -69,7 +70,7 @@ public class MovieQualityImpl implements MovieQualityService
 	}
 
 	@Override
-	public MovieQualityDto getQualityById(Integer qualityId) {
+	public MovieQualityDto getQualityById(Long qualityId) {
 		MovieQuality qualities = mqr.findById(qualityId).get();
 		return mm.map(qualities, MovieQualityDto.class);
 	}

@@ -3,6 +3,7 @@ package in.AY.Movie.Backend.Movie.Implementation;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +42,7 @@ public class MovieScreenshotImpl implements MovieScreenshotService
 	private String thumbnailPath;
 	
 	@Override
-	public void addScreenshots(Integer movieId, List<MultipartFile> images) throws IOException {
+	public void addScreenshots(UUID movieId, List<MultipartFile> images) throws IOException {
 
 	    Movie movie = mr.findById(movieId)
 	            .orElseThrow(() -> new ResourceNotFoundException("Movie", "id", movieId));
@@ -59,12 +60,13 @@ public class MovieScreenshotImpl implements MovieScreenshotService
 	}
 	
 	@Override
-	public String updateScreenshot(Integer movieId, Integer screenshotId, MultipartFile image) throws IOException {
+	public String updateScreenshot(UUID movieId, Integer screenshotId, MultipartFile image) throws IOException {
 		MovieScreenShot ss = movSS.findById(screenshotId)
             .orElseThrow(() -> new ResourceNotFoundException("Screenshot", "id", screenshotId));
 
 		// Validate screenshot belongs to movie
-		if(ss.getMovie().getId().intValue() != movieId) 
+		//if(ss.getMovie().getId().intValue() != movieId) 
+		if (!ss.getMovie().getId().equals(movieId))
 		{
 			throw new ResourceNotFoundException(
 			        "Screenshot",
@@ -91,10 +93,11 @@ public class MovieScreenshotImpl implements MovieScreenshotService
 	}
 
 	@Override
-	public void deleteScreenShot(Integer movieId, Integer screenshotID) {
+	public void deleteScreenShot(UUID movieId, Integer screenshotID) {
 		MovieScreenShot ss = movSS.findById(screenshotID)
 	            .orElseThrow(() -> new ResourceNotFoundException("Screenshot", "id", screenshotID));
-		if(ss.getMovie().getId().intValue() != movieId) 
+		//if(ss.getMovie().getId().intValue() != movieId) 
+		if (!ss.getMovie().getId().equals(movieId))
 		{
 			throw new ResourceNotFoundException(
 			        "Screenshot",
@@ -115,7 +118,7 @@ public class MovieScreenshotImpl implements MovieScreenshotService
 	}
 
 	@Override
-	public List<MovieScreenShotDto> getScreenShot(Integer movieId) {
+	public List<MovieScreenShotDto> getScreenShot(UUID movieId) {
 		List<MovieScreenShot> screenshots = movSS.findByMovieId(movieId);
 
 	    return screenshots.stream()
@@ -124,7 +127,7 @@ public class MovieScreenshotImpl implements MovieScreenshotService
 	}
 	
 	@Override
-	public String updateThumbnail(Integer movieId, MultipartFile image) throws IOException {
+	public String updateThumbnail(UUID movieId, MultipartFile image) throws IOException {
 
 	    Movie movie = mr.findById(movieId)
 	            .orElseThrow(() -> new ResourceNotFoundException("Movie", "id", movieId));

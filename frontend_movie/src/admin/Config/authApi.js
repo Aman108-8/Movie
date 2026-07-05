@@ -16,6 +16,10 @@ export const getAllMovies = (page = 0) => {
     return httpClient.get(`/api/movie/?pageNumber=${page}`);
 };
 
+export const addMovie = (data)=>{
+  return httpClient.post(`/api/movie/`,data)
+}
+
 export const deleteMovies = (movieId) => {
     return httpClient.delete(`/api/movie/${movieId}`);
 };

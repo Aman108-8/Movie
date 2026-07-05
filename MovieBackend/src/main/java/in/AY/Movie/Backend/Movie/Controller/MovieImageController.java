@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -47,7 +48,7 @@ public class MovieImageController
 	
 	@PostMapping("/{movieId}/screenshots")
 	public ResponseEntity<String> uploadScreenshots(
-	        @PathVariable Integer movieId,
+	        @PathVariable UUID movieId,
 	        @RequestParam("images") List<MultipartFile> images
 	) throws IOException {
 
@@ -59,7 +60,7 @@ public class MovieImageController
 	@PutMapping("/{movieId}/screenshot/{screenshotId}")
 	public ResponseEntity<String> updateScreenshot(
 	        @PathVariable Integer screenshotId,
-	        @PathVariable Integer movieId,
+	        @PathVariable UUID movieId,
 	        @RequestParam("image") MultipartFile image
 	) throws IOException {
 
@@ -81,7 +82,7 @@ public class MovieImageController
 	
 	@PutMapping("/{movieId}/thumbnail")
 	public ResponseEntity<String> updateThumbnail(
-	        @PathVariable Integer movieId,
+	        @PathVariable UUID movieId,
 	        @RequestParam("image") MultipartFile image
 	) throws IOException {
 
@@ -93,7 +94,7 @@ public class MovieImageController
 	@DeleteMapping("/{movieId}/screenshot/{screenshotId}")
 	public ResponseEntity<String> deleteScreenshot(
 	        @PathVariable("screenshotId") Integer screenshotId,
-	        @PathVariable("movieId") Integer movieId
+	        @PathVariable("movieId") UUID movieId
 	) throws IOException {
 
 		mScreenshot.deleteScreenShot(movieId, screenshotId);
@@ -103,7 +104,7 @@ public class MovieImageController
 	
 	@GetMapping("/{movieId}/screenshots")
 	public ResponseEntity<List<MovieScreenShotDto>> getScreenshot(
-	        @PathVariable("movieId") Integer movieId
+	        @PathVariable("movieId") UUID movieId
 	) throws IOException {
 
 		List<MovieScreenShotDto> screenshots = mScreenshot.getScreenShot(movieId);

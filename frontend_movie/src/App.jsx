@@ -8,6 +8,8 @@ import User from "./admin/Component/User";
 import MovieAdmin from "./admin/Component/Movie";
 import Pricing from "./Component/Pricing";
 import Edit from "./admin/Component/Edit";
+import MovieDetails from "./Component/MovieDetails";
+import DownloadPage from "./Component/DownloadPage";
 
 function App() {
   const [showAuth, setShowAuth] = useState(false);
@@ -49,6 +51,8 @@ function App() {
     >
       <Route index element={<Movie />} />
       <Route path="pricing" element={<Pricing />} />
+      <Route path="MovieDetails/:movieId?" element={<MovieDetails />} />
+      <Route path="/download/:movieId" element={<DownloadPage />} />
     </Route>
 
     {/* ADMIN SIDE */}

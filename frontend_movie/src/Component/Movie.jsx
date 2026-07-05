@@ -1,7 +1,7 @@
 import React from 'react'
 import { useEffect, useState } from 'react'
 import { getAllMovies, searchMovie } from '../Config/authApi'
-import { useOutletContext } from 'react-router-dom';
+import { useNavigate, useOutletContext } from 'react-router-dom';
 import {FaPlus} from "react-icons/fa";
 
 const Movie = () => {
@@ -90,6 +90,7 @@ const Movie = () => {
           <MovieCard 
             key={movie.id} 
             movie={movie}
+            
           />
         )))}
         
@@ -105,11 +106,13 @@ export default Movie
 
 
 const MovieCard = ({movie}) => {
+
+  const navigate = useNavigate()
   return (
     <div className="group relative w-[200px] h-[300px] rounded-2xl overflow-hidden cursor-pointer
       transition-all duration-300 hover:scale-105
       shadow-[0_0_15px_rgba(34,211,238,0.3)]
-      hover:shadow-[0_0_25px_rgba(34,211,238,0.8),0_0_50px_rgba(34,211,238,0.5)]">
+      hover:shadow-[0_0_25px_rgba(34,211,238,0.8),0_0_50px_rgba(34,211,238,0.5)]" onClick={() => navigate(`/MovieDetails/${movie.id}`)}>
 
       {/* IMAGE */}
       <img

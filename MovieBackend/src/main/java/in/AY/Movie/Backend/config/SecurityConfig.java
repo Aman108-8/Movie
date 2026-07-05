@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -44,16 +45,18 @@ public class SecurityConfig
 	@Autowired
 	private JwtAuthenticationFilter jwtAuthenticationFilter;
 	
-	@Bean
+	/*@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http)
 	{
 		
 		http
         .csrf(csrf -> csrf.disable())	//Because JWT is stateless. CSRF protection is needed for session-based auth.
+        .cors(Customizer.withDefaults())
         .authorizeHttpRequests(auth -> auth		//Any other request → must be authenticated
                 .requestMatchers(PUBLIC_URLS).permitAll()
                 .requestMatchers(HttpMethod.GET, "/**").permitAll()
-                .anyRequest().authenticated()
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                .anyRequest().permitAll()//.authenticated()
         )
         .exceptionHandling(ex -> ex
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint)
@@ -65,6 +68,22 @@ public class SecurityConfig
         http.addFilterBefore(jwtAuthenticationFilter,
 	            UsernamePasswordAuthenticationFilter.class);
 	
+	    return http.build();
+	}*/
+	
+	@Bean
+	public SecurityFilterChain securityFilterChain(HttpSecurity http)
+	{
+	    http
+	        .csrf(csrf -> csrf.disable())
+	        .cors(Customizer.withDefaults())
+	        .authorizeHttpRequests(auth -> auth
+	                .anyRequest().permitAll()
+	        )
+	        .sessionManagement(session ->
+	                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+	        );
+
 	    return http.build();
 	}
 	

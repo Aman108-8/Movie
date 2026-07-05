@@ -85,7 +85,7 @@ const AuthForm = ({onAuth, setAuthType}) => {
                     backgroundColor: 'rgba(255, 255, 255, 0.08)' // Base translucency
                 }}
             >
-                <div className='flex flex-col item-center mb-8' >
+                <div className='flex flex-col item-center mb-8 ' >
                 <img src={name} alt="MovieGalaxy Logo" className='h-13 mb-[-15px]'/>
                     <h4 className='text-xs text-gray-400 tracking-wider'>MOVIE STREAMING</h4>
                     <h1 className='text-3xl font-bold mt-3'>Welcome Back!</h1>

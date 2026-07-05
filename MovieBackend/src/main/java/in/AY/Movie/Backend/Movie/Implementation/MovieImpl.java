@@ -3,6 +3,7 @@ package in.AY.Movie.Backend.Movie.Implementation;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
@@ -50,7 +51,7 @@ public class MovieImpl implements MovieService {
 	private String screenshotsPath;
 
 	@Override
-	public MovieDto addMovie(MovieDto movieDto, String fileName) {
+	public MovieDto addMovie(MovieDto movieDto) {
 		Movie movie = new Movie();
 
 		movie.setTitle(movieDto.getTitle());
@@ -59,12 +60,12 @@ public class MovieImpl implements MovieService {
 		movie.setRating(movieDto.getRating());
 		movie.setReleaseYear(movieDto.getReleaseYear());
 
-		if (fileName != null) {
+		/*if (fileName != null) {
 			movie.setThumbnail(fileName);
-		}
+		}*/
 
 		// qualities
-		if (movieDto.getQuality() != null) {
+		/*if (movieDto.getQuality() != null) {
 			for (MovieQualityDto qdto : movieDto.getQuality()) {
 				MovieQuality q = new MovieQuality();
 				q.setQuality(qdto.getQuality());
@@ -72,14 +73,13 @@ public class MovieImpl implements MovieService {
 
 				movie.addQuality(q);
 			}
-		}
-
+		}*/
 		Movie newMovie = mr.save(movie);
 		return mm.map(newMovie, MovieDto.class);
 	}
 
 	@Override
-	public MovieDto UpdateMovie(Integer id, MovieDto movieDto) 
+	public MovieDto UpdateMovie(UUID id, MovieDto movieDto) 
 	{
 		Movie movie = mr.findById(id).orElseThrow(() -> new ResourceNotFoundException("Movie", "Movie id", id));
 		movie.setGenre(movieDto.getGenre());
@@ -121,7 +121,7 @@ public class MovieImpl implements MovieService {
 	}
 
 	@Override
-	public void DeleteMovie(Integer id) {
+	public void DeleteMovie(UUID id) {
 		Movie movie = mr.findById(id).orElseThrow(() -> new ResourceNotFoundException("Movie", "Movie id", id));
 		mr.delete(movie);
 	}
@@ -153,7 +153,7 @@ public class MovieImpl implements MovieService {
 	}
 
 	@Override
-	public MovieDto getMovieById(Integer id) {
+	public MovieDto getMovieById(UUID id) {
 		Movie movie = mr.findById(id).get();
 
 		return mm.map(movie, MovieDto.class);

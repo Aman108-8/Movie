@@ -2,17 +2,18 @@ package in.AY.Movie.Backend.Movie.Service;
 
 import java.util.List;
 
+import java.util.UUID;
 import in.AY.Movie.Backend.Movie.Payload.MovieQualityDto;
 
 public interface MovieQualityService 
 {
-	MovieQualityDto addMovieQuality(Integer movieId, MovieQualityDto mq);
+	MovieQualityDto addMovieQuality(UUID movieId, MovieQualityDto mq);
 	
-	MovieQualityDto updateQuality(Integer MovieQualityId, MovieQualityDto mq);
+	MovieQualityDto updateQuality(Long MovieQualityId, MovieQualityDto mq);
 	
-	void deleteQuality(Integer MovieQualityId);
+	void deleteQuality(Long MovieQualityId);
 	
-	List<MovieQualityDto> getAllQuality(Integer MovieId);
+	List<MovieQualityDto> getAllQuality(UUID MovieId);
 	
-	MovieQualityDto getQualityById(Integer qualityId);
+	MovieQualityDto getQualityById(Long qualityId);
 }

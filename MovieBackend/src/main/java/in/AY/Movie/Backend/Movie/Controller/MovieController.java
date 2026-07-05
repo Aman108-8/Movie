@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -47,20 +48,19 @@ public class MovieController
 	@Value("${project.movie.thumbnail}")
 	private String thumbnailPath;
 	
-	@PostMapping(value="/", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	@PostMapping(value="/")
 	public ResponseEntity<MovieDto> addMovie(
-	        @RequestPart("movie") MovieDto mov,
-	        @RequestPart("image") MultipartFile image) throws IOException 
+	        @RequestBody MovieDto mov)
 	{
-		String fileName= this.fs.UploadImage(thumbnailPath, image);
-		MovieDto movieDto = ms.addMovie(mov, fileName);
+		//String fileName= this.fs.UploadImage(thumbnailPath, image);
+		MovieDto movieDto = ms.addMovie(mov);//, fileName);
 		return new ResponseEntity<>(movieDto, HttpStatus.CREATED);
 	}
 	
 	@PutMapping(value="/{movieId}")
 	ResponseEntity<MovieDto> updateMovie(
 			@RequestBody MovieDto mov,
-	        @PathVariable("movieId") Integer id)  throws IOException
+	        @PathVariable("movieId") UUID id)  throws IOException
 	{
 		//String fileName = null;
 
@@ -75,7 +75,7 @@ public class MovieController
 	}
 	
 	@DeleteMapping("/{movieId}")
-	ResponseEntity<ApiResponse> deleteMovie(@PathVariable("movieId") Integer id){
+	ResponseEntity<ApiResponse> deleteMovie(@PathVariable("movieId") UUID id){
 		ms.DeleteMovie(id);
 		return new ResponseEntity<>(new ApiResponse("User Deleted Successfully", true), HttpStatus.OK );
 	}
@@ -91,7 +91,7 @@ public class MovieController
 	}
 	
 	@GetMapping("/{movieId}")
-	ResponseEntity<MovieDto> getMovie(@PathVariable("movieId") Integer id)
+	ResponseEntity<MovieDto> getMovie(@PathVariable("movieId") UUID id)
 	{
 		return ResponseEntity.ok(this.ms.getMovieById(id));
 	}

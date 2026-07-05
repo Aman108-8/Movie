@@ -160,8 +160,6 @@ const MovieCard = ({ movie, onDelete, onEdit }) => {
         >
           Delete
         </ActionButton>
-
-        <ActionButton>Details</ActionButton>
       </div>
     </div>
   );
@@ -184,12 +182,12 @@ const ActionButton = ({ children, type, action }) => {
     type === "delete"
       ? "hover:text-red-400"
       : type === "edit"
-      ? "hover:text-yellow-400"
-      : "hover:text-cyan-400";
+      ? "hover:text-cyan-400"
+      : "hover:text-yellow-400";
 
   return (
     <button
-      className={`font-semibold border px-2 rounded-md text-sm transition duration-300 ${color}
+      className={`font-semibold border px-6 rounded-md text-sm transition duration-300 ${color}
       shadow-[0_0_15px_rgba(34,211,238,0.3)]
       hover:shadow-[0_0_25px_rgba(34,211,238,0.8),0_0_50px_rgba(34,211,238,0.5)]`}
       style={buttonStyle} onClick={action}
