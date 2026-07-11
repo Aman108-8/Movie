@@ -14,37 +14,73 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StreamUtils;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import in.AY.Movie.Backend.config.AppConstants;
 import in.AY.Movie.Backend.Movie.Payload.MovieDto;
-import in.AY.Movie.Backend.Movie.Payload.MovieQualityDto;
 import in.AY.Movie.Backend.Movie.Payload.MovieResponse;
 import in.AY.Movie.Backend.Movie.Payload.MovieScreenShotDto;
 import in.AY.Movie.Backend.Movie.Service.FileImageService;
-import in.AY.Movie.Backend.Movie.Service.MovieQualityService;
 import in.AY.Movie.Backend.Movie.Service.MovieScreenshotService;
 import in.AY.Movie.Backend.Movie.Service.MovieService;
-import in.AY.Movie.Backend.config.AppConstants;
+import in.AY.Movie.Backend.User.Payload.ApiResponse;
 import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
-@RequestMapping("/api/movie")
-public class MovieController 
+@RequestMapping("/api/admin/movie")
+public class MovieAdminController 
 {
 	@Autowired MovieService ms;
-    @Autowired FileImageService fs;
+	
     @Autowired MovieScreenshotService mScreenshot;   // ← add this
-    @Autowired MovieQualityService mqs;  
+	
+	@Autowired FileImageService fs;
 	
 	@Value("${project.movie.thumbnail}")
 	private String thumbnailPath;
 	
-	@Value("${project.movie.screenshots}")           // ← add this
-    private String screenshotsPath;
+	@PostMapping(value="/")
+	public ResponseEntity<MovieDto> addMovie(
+	        @RequestBody MovieDto mov)
+	{
+		//String fileName= this.fs.UploadImage(thumbnailPath, image);
+		MovieDto movieDto = ms.addMovie(mov);//, fileName);
+		return new ResponseEntity<>(movieDto, HttpStatus.CREATED);
+	}
+	
+	@PutMapping(value="/{movieId}")
+	ResponseEntity<MovieDto> updateMovie(
+			@RequestBody MovieDto mov,
+	        @PathVariable("movieId") UUID id)  throws IOException
+	{
+		//String fileName = null;
+
+		//thumbnail upload
+	    /*if(image != null && !image.isEmpty())
+	    {
+	        fileName = this.fs.UploadImage(thumbnailPath, image);
+	    }*/
+	    
+	    MovieDto movieDto = ms.UpdateMovie(id, mov);//, screenshotNames);
+		return ResponseEntity.ok(movieDto);
+	}
+	
+	@DeleteMapping("/{movieId}")
+	ResponseEntity<ApiResponse> deleteMovie(@PathVariable("movieId") UUID id){
+		ms.DeleteMovie(id);
+		return new ResponseEntity<>(new ApiResponse("User Deleted Successfully", true), HttpStatus.OK );
+	}
 	
 	@GetMapping("/")
 	ResponseEntity<MovieResponse> getAllMovie(@RequestParam(value="pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
@@ -68,6 +104,12 @@ public class MovieController
 		return new ResponseEntity<List<MovieDto>>(result, HttpStatus.OK);
 	}
 	
+	/*@GetMapping("/{movieId}/screenshots")
+    public ResponseEntity<List<MovieScreenShotDto>> getScreenshots(
+            @PathVariable("movieId") UUID movieId) throws IOException {
+        return ResponseEntity.ok(mScreenshot.getScreenShot(movieId));
+    }*/
+	
 	@GetMapping(value = "/thumbnail/image/{imageName}")
 	public void downloadImage(@PathVariable("imageName") String imageName, HttpServletResponse response) throws IOException{
 		// create full path of image
@@ -83,35 +125,4 @@ public class MovieController
 	    // send file to browser
 	    StreamUtils.copy(resource, response.getOutputStream());
 	}
-	
-	// ── ADD THESE TWO ────────────────────────────────────────────────────────
-
-    // Public: users need to see screenshots on MovieDetails page
-    @GetMapping("/{movieId}/screenshots")
-    public ResponseEntity<List<MovieScreenShotDto>> getScreenshots(
-            @PathVariable("movieId") UUID movieId) throws IOException {
-        return ResponseEntity.ok(mScreenshot.getScreenShot(movieId));
-    }
-
-    // Public: users need to see quality options to pick for download
-    @GetMapping("/{movieId}/quality")
-    public ResponseEntity<List<MovieQualityDto>> getQualities(
-            @PathVariable("movieId") UUID movieId) 
-    {
-        return ResponseEntity.ok(mqs.getAllQuality(movieId));
-    }
-
-    // Public: users need to see screenshot images
-    @GetMapping("/screenshot/image/{imageName}")
-    public void downloadScreenshot(
-            @PathVariable String imageName,
-            HttpServletResponse response) throws IOException 
-    {
-        String fullPath = screenshotsPath + File.separator + imageName;
-        String contentType = Files.probeContentType(Paths.get(fullPath));
-        if (contentType == null) contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
-        response.setContentType(contentType);
-        InputStream resource = fs.getResource(screenshotsPath, imageName);
-        StreamUtils.copy(resource, response.getOutputStream());
-    }
 }

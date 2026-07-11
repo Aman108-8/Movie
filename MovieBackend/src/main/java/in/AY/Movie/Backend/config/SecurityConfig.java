@@ -34,7 +34,8 @@ public class SecurityConfig
             "/swagger-resources/**",
             "/webjars/**",
             "/auth/users/**",
-            "/api/movie/**"
+            "/api/movie/**",
+            "/api/download/**"
 	};
 	@Autowired
 	private CustomUserDetailService customUserDetailService;
@@ -45,47 +46,31 @@ public class SecurityConfig
 	@Autowired
 	private JwtAuthenticationFilter jwtAuthenticationFilter;
 	
-	/*@Bean
-	public SecurityFilterChain securityFilterChain(HttpSecurity http)
-	{
-		
-		http
-        .csrf(csrf -> csrf.disable())	//Because JWT is stateless. CSRF protection is needed for session-based auth.
-        .cors(Customizer.withDefaults())
-        .authorizeHttpRequests(auth -> auth		//Any other request → must be authenticated
-                .requestMatchers(PUBLIC_URLS).permitAll()
-                .requestMatchers(HttpMethod.GET, "/**").permitAll()
-                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                .anyRequest().permitAll()//.authenticated()
-        )
-        .exceptionHandling(ex -> ex
-                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
-        )
-        .sessionManagement(session ->
-                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        );
-
-        http.addFilterBefore(jwtAuthenticationFilter,
-	            UsernamePasswordAuthenticationFilter.class);
 	
-	    return http.build();
-	}*/
-	
-	@Bean
-	public SecurityFilterChain securityFilterChain(HttpSecurity http)
-	{
+	 @Bean
+	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 	    http
 	        .csrf(csrf -> csrf.disable())
 	        .cors(Customizer.withDefaults())
 	        .authorizeHttpRequests(auth -> auth
-	                .anyRequest().permitAll()
+	            .requestMatchers(PUBLIC_URLS).permitAll()
+	            .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+	            .requestMatchers("/api/admin/movie/**").authenticated()
+	            .anyRequest().authenticated()
+	        )
+	        .exceptionHandling(ex -> ex
+	            .authenticationEntryPoint(jwtAuthenticationEntryPoint)
 	        )
 	        .sessionManagement(session ->
-	                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+	            session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 	        );
+
+	    // ← THIS LINE WAS MISSING — without it JWT is never parsed
+	    http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
 	    return http.build();
 	}
+	 
 	
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception{
 		auth.userDetailsService(customUserDetailService)

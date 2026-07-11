@@ -19,14 +19,14 @@ import in.AY.Movie.Backend.Download.Payload.DownloadResponseDto;
 import in.AY.Movie.Backend.Download.Service.DownloadService;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/download")
 @CrossOrigin(origins = "http://localhost:5173")
 public class DownloadController {
 
     @Autowired
     private DownloadService downloadService;
 
-    @PostMapping("/download")
+    @PostMapping("/movie")
     public ResponseEntity<?> downloadMovie(
             @RequestBody DownloadRequestDto request) {
 
@@ -44,7 +44,7 @@ public class DownloadController {
         }
     }
     
-    @GetMapping("/download/progress")
+    @GetMapping("/progress")
     public ResponseEntity<DownloadProgressDto> getProgress() {
 
         return ResponseEntity.ok(
@@ -52,19 +52,19 @@ public class DownloadController {
         );
     }
     
-    @PostMapping("/download/cancel")
+    @PostMapping("/cancel")
     public ResponseEntity<DownloadProgressDto> cancelDownload() {
 
         return ResponseEntity.ok(downloadService.cancelDownload());
     }
     
-    @PostMapping("/download/pause")
+    @PostMapping("/pause")
     public ResponseEntity<DownloadProgressDto> pauseDownload() {
 
         return ResponseEntity.ok(downloadService.pauseDownload());
     }
     
-    @PostMapping("/download/resume")
+    @PostMapping("/resume")
     public ResponseEntity<DownloadResponseDto> resumeDownload() {
 
         return ResponseEntity.ok(downloadService.resumeDownload());

@@ -31,8 +31,8 @@ import in.AY.Movie.Backend.Movie.Service.MovieService;
 import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
-@RequestMapping("/api/movie")
-public class MovieImageController 
+@RequestMapping("/api/admin/movie")
+public class MovieAdminImageController 
 {
 	@Autowired
 	MovieScreenshotService mScreenshot;

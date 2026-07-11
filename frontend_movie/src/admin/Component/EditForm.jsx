@@ -300,7 +300,7 @@ const EditForm = ({movie}) => {
                     <FaArrowLeft/>
                   </Link>
                 </button>
-                <h1 className='text-white font-medium text-3xl'>ASTRO QUEST</h1>
+                <h1 className='text-white font-medium text-3xl'>{formData.title}</h1>
             </div>
 
             <div className='flex flex-row gap-x-[2rem] pr-7'>
@@ -445,7 +445,7 @@ const EditForm = ({movie}) => {
                                 className="group relative w-[150px] h-[80px] cursor-pointer"
                               >
                                 <img
-                                  src={`http://localhost:9090/api/movie/screenshot/image/${ss.imagePath}?t=${Date.now()}`}
+                                  src={`http://localhost:9090/api/admin/movie/screenshot/image/${ss.imagePath}?t=${Date.now()}`}
                                   className="w-full h-full object-cover rounded-lg"
                                 />
 

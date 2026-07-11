@@ -30,6 +30,6 @@ body {
 
 /* Custom utility class to generate the lightning ripple */
 .animate-plasma {
-  background-size: 20% 240%;
+  background-size: 240% 100%;
   animation: plasma-shimmer 4s ease-in-out infinite;
 }

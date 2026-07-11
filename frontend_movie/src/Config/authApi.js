@@ -18,20 +18,20 @@ export const searchMovie = (movieName) => {
 };
 
 export const getMovieDetails = (movieId) => {
-    return httpClient.get(`api/movie/${movieId}`)
+    return httpClient.get(`/api/movie/${movieId}`)
 }
 
 export const getScreenshots=(movieId)=>{
-    return httpClient.get(`api/movie/${movieId}/screenshots`)
+    return httpClient.get(`/api/movie/${movieId}/screenshots`)
 }
 
 export const getQualities=(movieId)=>{
-    return httpClient.get(`api/movie/${movieId}/quality`)
+    return httpClient.get(`/api/movie/${movieId}/quality`)
 }
 
 export const downloadMovie = (url, quality) => {
     return axios.post(
-        "http://localhost:9090/api/download",
+        "http://localhost:9090/api/download/movie",
         { url, quality },
         {
             timeout: 0 // no timeout
