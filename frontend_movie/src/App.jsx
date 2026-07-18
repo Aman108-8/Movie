@@ -10,6 +10,7 @@ import Pricing from "./Component/Pricing";
 import Edit from "./admin/Component/Edit";
 import MovieDetails from "./Component/MovieDetails";
 import DownloadPage from "./Component/DownloadPage";
+import { ToastContainer} from 'react-toastify';
 
 function App() {
   const [showAuth, setShowAuth] = useState(false);
@@ -34,6 +35,8 @@ function App() {
   }, [showAuth]);
 
   return (
+    <div>
+      <ToastContainer />
     <BrowserRouter>
   <Routes>
 
@@ -70,11 +73,12 @@ function App() {
   {showAuth && (
     <div className="fixed inset-0 z-40 flex items-center justify-center backdrop-blur-[3px] bg-black/20">
       <div ref={modalRef}>
-        <AuthForm onAuth={authType} setAuthType={setAuthType} />
+        <AuthForm onAuth={authType} setAuthType={setAuthType} setShowAuth={setShowAuth} />
       </div>
     </div>
   )}
 </BrowserRouter>
+</div>
   );
 }
 

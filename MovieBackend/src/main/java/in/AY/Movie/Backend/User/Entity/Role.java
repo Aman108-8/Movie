@@ -1,5 +1,6 @@
 package in.AY.Movie.Backend.User.Entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -10,6 +11,7 @@ public class Role {
 	
 	@Id
 	private int id;
+	@Column
 	private String name;
 	
 	public int getId() {

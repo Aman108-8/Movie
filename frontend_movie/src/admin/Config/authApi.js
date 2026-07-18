@@ -12,6 +12,10 @@ export const getAllUser = () => {
     return httpClient.get(`/api/users/`);
 };
 
+export const deleteUser = (userId) => {
+    return httpClient.delete(`/api/users/${userId}`);
+}
+
 
 //movie
 export const getAllMovies = (page = 0) => {

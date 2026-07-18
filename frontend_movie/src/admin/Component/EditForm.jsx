@@ -4,6 +4,7 @@ import * as api from '../Config/authApi';
 import { FaArrowLeft,FaTrash, FaPlusCircle, FaCamera} from "react-icons/fa";
 import defaultImg from '../assets/default.png';
 import { useNavigate } from "react-router-dom";
+import { toast } from 'react-toastify';
 
 const EditForm = ({movie}) => {
     const inputClass = "text-white bg-glass-fill border border-glass-border rounded-lg text-sm text-gray-400 px-4 py-2.5 focus:outline-none focus:border-cyan-400";
@@ -108,24 +109,28 @@ const EditForm = ({movie}) => {
         {
           try {
             const res = await api.updateMovie(currentMovie.id, formData);
+            toast.success("Movie updated successfully");
         
             console.log("Saved:", res.data);
 
             setCurrentMovie(res.data)
         
           } catch (err) {
+            toast.error("Failed to update movie");
             console.error("Error saving movie:", err);
           }
         }
         else{
           try {
             const res = await api.addMovie(formData);
+            toast.success("Movie added successfully");
             setCurrentMovie(res.data);
 
             console.log("Saved:", res.data);
         
           } catch (err) {
             console.error("Error saving movie:", err);
+            toast.error("Failed to add movie");
           }
         }
       };
@@ -178,6 +183,7 @@ const EditForm = ({movie}) => {
       
         try {
           await api.uploadScreenshots(currentMovie.id, files);
+          toast.success("Screenshots uploaded successfully");
           
           console.log('upload success')
 
@@ -185,6 +191,7 @@ const EditForm = ({movie}) => {
       
         } catch (err) {
           console.error("Screenshot update failed", err);
+          toast.error("Failed to upload screenshots");
         }
       };
 
@@ -198,10 +205,11 @@ const EditForm = ({movie}) => {
           console.log("Updating screenshot:", selectedSSRef.current);
       
           await api.updateScreenShot(selectedSSRef.current,currentMovie.id,file);
-      
+          toast.success("Screenshot updated successfully");
           await fetchScreenshots(currentMovie.id);
       
         } catch (err) {
+          toast.error("Failed to update screenshot");
           console.error("Screenshot update failed", err);
         }
       };
@@ -209,11 +217,12 @@ const EditForm = ({movie}) => {
       const handleDeleteScreenshot = async (ssId) => {
         try {
           await api.deleteScreenshot(currentMovie.id, ssId);
-          console.error("Delete success",ssId);
+          toast.success("Screenshot deleted successfully");
           // ✅ remove from UI instantly
           setScreenshots(prev => prev.filter(ss => ss.id !== ssId));
       
         } catch (err) {
+          toast.error("Failed to delete screenshot");
           console.error("Delete failed", err);
         }
       };
@@ -244,6 +253,7 @@ const EditForm = ({movie}) => {
               }
             )
 
+            toast.success("Quality added successfully");
             setQuality(prev =>prev.map(item=>
               item.id === q.id ? res.data : item
             ));
@@ -255,13 +265,18 @@ const EditForm = ({movie}) => {
               quality: q.quality,
               link: q.link
             });
+            toast.success("Quality updated successfully");
           }
       
           setEditingField(null);
       
-        } catch (err) {
+        } 
+        catch (err) 
+        {
+          toast.error("Failed to save quality");
           console.error("Error saving:", err);
-        } finally {
+        } 
+        finally {
           setSavingId(null);
           setEditingField(null); // 🔥 exit edit mode
         }
@@ -285,10 +300,13 @@ const EditForm = ({movie}) => {
       const handleQualityDelete = async (qid) =>{
         try {
           await api.deleteQuality(qid);
+          toast.success("Quality deleted successfully");
           console.log("successfully quality deleted");
           setQuality(prev => prev.filter(q => q.id !== qid));
-        } catch (error) {
+        } 
+        catch (error) {
           console.log("failed quality deleted", error);
+          toast.error("Failed to delete quality");
         }
       }
     
@@ -445,7 +463,7 @@ const EditForm = ({movie}) => {
                                 className="group relative w-[150px] h-[80px] cursor-pointer"
                               >
                                 <img
-                                  src={`http://localhost:9090/api/admin/movie/screenshot/image/${ss.imagePath}?t=${Date.now()}`}
+                                  src={`http://localhost:9090/api/movie/screenshot/image/${ss.imagePath}?t=${Date.now()}`}
                                   className="w-full h-full object-cover rounded-lg"
                                 />
 

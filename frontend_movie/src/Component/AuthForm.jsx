@@ -3,9 +3,12 @@ import name from '../assets/name.png'
 import { FaUser, FaGoogle, FaFacebook } from "react-icons/fa";
 import { FiEyeOff, FiEye, FiMail} from "react-icons/fi";
 import { loginUser, registerUser } from '../Config/authApi';
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
-const AuthForm = ({onAuth, setAuthType}) => {
+const AuthForm = ({onAuth, setAuthType, setShowAuth}) => {
 
+    const navigate = useNavigate();
     const [showPassword, setShowPassword] = useState(false);
     const[loginFormData, setLoginFormData] = useState({
         email:'',
@@ -45,6 +48,10 @@ const AuthForm = ({onAuth, setAuthType}) => {
             const response = await loginUser(loginFormData);
             console.log("Login Success:", response.data);
             localStorage.setItem("token", response.data.token);
+
+            toast.success("Login successful!");
+            setShowAuth(false);
+            navigate('/');
         } catch (error) {
             console.error("Login Error:", error.response?.data || error.message);
         }
@@ -56,8 +63,9 @@ const AuthForm = ({onAuth, setAuthType}) => {
     
         try {
             const response = await registerUser(signInFormData);
+            toast.success("Signup successful! Please log in.");
             console.log("Signup Success:", response.data);
-    
+            setAuthType("Login");
         } catch (error) {
             console.error("Signup Error:", error.response?.data || error.message);
         }

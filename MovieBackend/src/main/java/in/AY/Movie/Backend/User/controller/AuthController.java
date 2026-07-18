@@ -47,7 +47,8 @@ public class AuthController {
 		return new ResponseEntity<JwtAuthResponse>(resp, HttpStatus.OK);
 	}
 	
-	private void authenticate(String email, String password) {
+	private void authenticate(String email, String password) 
+	{
 		UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(email, password);
 		try {
 			this.authenticationManager.authenticate(token);

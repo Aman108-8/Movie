@@ -5,6 +5,7 @@ import {deleteMovies, searchMovie} from '../Config/authApi'
 import { Link } from 'react-router-dom';
 import Edit from './Edit';
 import { useNavigate } from "react-router-dom";
+import { toast } from 'react-toastify';
 
 const Movie = () => {
 
@@ -56,9 +57,12 @@ const Movie = () => {
     try {
       console.log(id)
       await deleteMovies(id);
+      toast.success("Movie deleted successfully");
       setMovies(prev => prev.filter(m => m.id !== id)); // ✅ refresh after delete
-    } catch (error) {
+    } 
+    catch (error) {
       console.error("Delete failed", error);
+      toast.error("Failed to delete movie");
     }
   };
 

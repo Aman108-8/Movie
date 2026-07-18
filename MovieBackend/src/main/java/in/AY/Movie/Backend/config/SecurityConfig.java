@@ -23,7 +23,7 @@ import in.AY.Movie.Backend.User.Security.JwtAuthenticationFilter;
 
 @Configuration	
 @EnableWebSecurity	
-@EnableMethodSecurity
+@EnableMethodSecurity(prePostEnabled = true)	//sp that admin functionality can add
 public class SecurityConfig 
 {
 	public static final String[] PUBLIC_URLS= {
@@ -35,7 +35,9 @@ public class SecurityConfig
             "/webjars/**",
             "/auth/users/**",
             "/api/movie/**",
-            "/api/download/**"
+            "/api/download/**",
+            "/api/admin/movie/screenshot/image/**",
+            "/api/admin/movie/thumbnail/image/**"
 	};
 	@Autowired
 	private CustomUserDetailService customUserDetailService;
@@ -47,7 +49,7 @@ public class SecurityConfig
 	private JwtAuthenticationFilter jwtAuthenticationFilter;
 	
 	
-	 @Bean
+	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 	    http
 	        .csrf(csrf -> csrf.disable())
@@ -70,6 +72,21 @@ public class SecurityConfig
 
 	    return http.build();
 	}
+	
+	/*@Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http)
+    {
+        http
+            .csrf(csrf -> csrf.disable())
+            .cors(Customizer.withDefaults())
+            .authorizeHttpRequests(auth -> auth
+                    .anyRequest().permitAll()
+            )
+            .sessionManagement(session ->
+                    session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            );
+        return http.build();
+    }*/
 	 
 	
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception{

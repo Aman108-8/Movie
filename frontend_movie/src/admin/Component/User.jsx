@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import { getAllUser } from '../Config/authApi';
+import { deleteUser, getAllUser } from '../Config/authApi';
 import { FaTrash } from "react-icons/fa";
+import { toast } from 'react-toastify';
 
 const User = () => {
   
@@ -19,10 +20,24 @@ const User = () => {
 
   const fetchUsers = async () => {
     try {
+      toast.warn("wait users are loading");
       const resp = await getAllUser();
       setUser(resp.data.content || resp.data);
     } catch (error) {
-      console.error("Error fetching movies:", error);
+      console.error("Error fetching users:", error);
+    }
+  };
+
+  const handleDeleteUser = async (userId) => {
+    try {
+      // Call the API to delete the user
+      await deleteUser(userId);
+      toast.success("User deleted successfully");
+      // Refresh the user list
+      fetchUsers();
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      toast.error("Failed to delete user");
     }
   };
 
@@ -68,7 +83,7 @@ const User = () => {
                     className="p-2 rounded-md transition duration-300
                     hover:bg-red-500/20 hover:text-red-400
                     hover:shadow-[0_0_20px_rgba(255,0,0,0.6)]"
-                    
+                    onClick={() => handleDeleteUser(user.id)}
                   >
                     <FaTrash className="text-lg" />
                   </button>
