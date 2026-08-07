@@ -21,8 +21,8 @@ import com.razorpay.Utils;
 @CrossOrigin(origins = "http://localhost:5173")
 public class PaymentController 
 {
-	private static final String KEY_ID     = "rzp_test_T9neVKaIyORw7F"; 
-    private static final String KEY_SECRET = "z7T0HTSJ217gkaBd2juEhidV";
+	private static final String KEY_ID     = ""; 
+    private static final String KEY_SECRET = "";
     
     // ── Step 1: Frontend calls this to get a Razorpay order ID ─────────────
     @PostMapping("/create-order")
