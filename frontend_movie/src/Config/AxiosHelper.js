@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-export const baseURL = "http://localhost:9090"
+export const baseURL = import.meta.env.VITE_API_URL
 export const httpClient = axios.create({
     baseURL:baseURL,
     timeout:5000,   //maximum time Axios waits for server response
